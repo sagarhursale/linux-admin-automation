@@ -5,34 +5,23 @@
 
   tasks:
 
-    - name: Check disk space
+    - name: Check disk
       ansible.builtin.command: df -h
       register: disk
       changed_when: false
+      when: check_type in ['disk', 'all']
 
-    - name: Check uptime
-      ansible.builtin.command: uptime
-      register: uptime
-      changed_when: false
-
-    - name: Display health report
+    - name: Check CPU
       ansible.builtin.debug:
-        msg: |
-          ==============================
-          Linux Health Report
-          ==============================
+        msg: "CPU Cores: {{ ansible_processor_vcpus }}"
+      when: check_type in ['cpu', 'all']
 
-          Hostname : {{ ansible_hostname }}
-          IP       : {{ ansible_default_ipv4.address }}
-          OS       : {{ ansible_distribution }} {{ ansible_distribution_version }}
-          Kernel   : {{ ansible_kernel }}
-          CPU      : {{ ansible_processor_vcpus }}
-          RAM      : {{ ansible_memtotal_mb }} MB
+    - name: Check memory
+      ansible.builtin.debug:
+        msg: "Total RAM: {{ ansible_memtotal_mb }} MB"
+      when: check_type in ['memory', 'all']
 
-          Uptime:
-          {{ uptime.stdout }}
-
-          Disk:
-          {{ disk.stdout }}
-
-          ==============================
+    - name: Display disk report
+      ansible.builtin.debug:
+        msg: "{{ disk.stdout }}"
+      when: check_type in ['disk', 'all']
