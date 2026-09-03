@@ -1,0 +1,32 @@
+---
+- name: Linux Health Report
+  hosts: linux_servers
+  gather_facts: true
+
+  tasks:
+
+    - name: Check disk
+      ansible.builtin.command: df -h
+      register: disk
+      changed_when: false
+
+    - name: Send report by email
+      community.general.mail:
+        host: smtp.gmail.com
+        port: 587
+        username: "{{ gmail_user }}"
+        password: "{{ gmail_password }}"
+        from: "{{ gmail_user }}"
+        to: "{{ report_to }}"
+        subject: "Linux Health Report"
+        body: |
+          Linux Health Report
+
+          Host: {{ ansible_hostname }}
+          IP: {{ ansible_default_ipv4.address }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          CPU: {{ ansible_processor_vcpus }}
+          RAM: {{ ansible_memtotal_mb }} MB
+
+          Disk:
+          {{ disk.stdout }}
