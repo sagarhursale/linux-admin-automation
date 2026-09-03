@@ -1,6 +1,6 @@
 ---
 - name: Check Linux Servers
-  hosts: linux servers
+  hosts: linux_servers
   gather_facts: true
 
   tasks:
