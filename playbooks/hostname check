@@ -1,0 +1,9 @@
+---
+- name: Check Linux Servers
+  hosts: linux servers
+  gather_facts: true
+
+  tasks:
+    - name: Show hostname
+      ansible.builtin.debug:
+        msg: "Server hostname is {{ ansible_hostname }}"
