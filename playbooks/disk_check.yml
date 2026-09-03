@@ -1,6 +1,6 @@
 ---
 - name: Check Disk Space
-  hosts: all
+  hosts: linux_servers
   gather_facts: false
 
   tasks:
