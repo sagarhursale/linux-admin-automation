@@ -1,0 +1,38 @@
+---
+- name: Linux Health Check
+  hosts: linux_servers
+  gather_facts: true
+
+  tasks:
+
+    - name: Check disk space
+      ansible.builtin.command: df -h
+      register: disk
+      changed_when: false
+
+    - name: Check uptime
+      ansible.builtin.command: uptime
+      register: uptime
+      changed_when: false
+
+    - name: Display health report
+      ansible.builtin.debug:
+        msg: |
+          ==============================
+          Linux Health Report
+          ==============================
+
+          Hostname : {{ ansible_hostname }}
+          IP       : {{ ansible_default_ipv4.address }}
+          OS       : {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Kernel   : {{ ansible_kernel }}
+          CPU      : {{ ansible_processor_vcpus }}
+          RAM      : {{ ansible_memtotal_mb }} MB
+
+          Uptime:
+          {{ uptime.stdout }}
+
+          Disk:
+          {{ disk.stdout }}
+
+          ==============================
